@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Flavium Loading Screen</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            overflow: hidden;
+            font-family: 'Exo 2', sans-serif;
+        }
+
+        body {
+            background: #000;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* L'image de fond */
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('image_762bc8.jpg'); /* REMPLACE PAR TON IMAGE */
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+        }
+
+        /* Overlay sombre pour la lisibilité */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 2;
+        }
+
+        /* Conteneur du chargement en bas */
+        .loading-container {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            text-align: center;
+            z-index: 3;
+        }
+
+        .status-text {
+            color: white;
+            font-size: 18px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        /* La barre de progression */
+        .progress-bg {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0%; /* Sera modifié par le script */
+            height: 100%;
+            background: linear-gradient(90deg, #c83232, #ff4b4b);
+            box-shadow: 0 0 15px rgba(200, 50, 50, 0.8);
+            transition: width 0.3s ease-out;
+        }
+
+        .percentage {
+            color: white;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background"></div>
+    <div class="overlay"></div>
+
+    <div class="loading-container">
+        <div id="status" class="status-text">Initialisation de la connexion...</div>
+        <div class="progress-bg">
+            <div id="bar" class="progress-bar"></div>
+        </div>
+        <div id="percent" class="percentage">0%</div>
+    </div>
+
+    <script type="text/javascript">
+        var totalFiles = 0;
+        var filesLeft = 0;
+
+        // Fonction appelée par GMod pour définir le nombre total de fichiers
+        function SetFilesTotal(total) {
+            totalFiles = total;
+        }
+
+        // Fonction appelée par GMod pour définir le nombre de fichiers restants
+        function SetFilesNeeded(needed) {
+            filesLeft = needed;
+            updateProgress();
+        }
+
+        // Fonction appelée par GMod lors du téléchargement d'un fichier spécifique
+        function DownloadingFile(filename) {
+            document.getElementById('status').innerHTML = "Téléchargement : " + filename;
+        }
+
+        // Fonction appelée par GMod pour les messages d'état (ex: Sending Client Info)
+        function SetStatusChanged(status) {
+            document.getElementById('status').innerHTML = status;
+        }
+
+        function updateProgress() {
+            if (totalFiles > 0) {
+                // Calcul du pourcentage : (Total - Restant) / Total * 100
+                var percent = Math.floor(((totalFiles - filesLeft) / totalFiles) * 100);
+                
+                // On s'assure que le pourcentage ne dépasse pas 100
+                if (percent > 100) percent = 100;
+
+                document.getElementById('bar').style.width = percent + "%";
+                document.getElementById('percent').innerHTML = percent + "%";
+            }
+        }
+    </script>
+
+</body>
+</html>
